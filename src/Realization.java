@@ -15,6 +15,7 @@ public class Realization implements Changeable{
     private List<Data> list;
     private static final Path PATH = Paths.get("data/database.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private boolean isOpen;
 
 
     @Override
@@ -26,12 +27,19 @@ public class Realization implements Changeable{
             e.printStackTrace();
         }
         list = List.of(GSON.fromJson(json, Data[].class));
+        isOpen = true;
         return list;
     }
 
     @Override
     public void closeConnection() {
-
+        String json = GSON.toJson(list);
+        try {
+            Files.write(PATH, json.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        isOpen = false;
     }
 
     @Override
